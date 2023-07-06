@@ -1,0 +1,1023 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: 2294678765@qq.com
+    name: API Support
+    url: https://github.com/FranklinThree
+  description: 基于SpringBoot的响应式技术博客的设计和实现前后端接口实现
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: frontend-backend-api
+  version: "1.0"
+servers:
+- url: http://localhost:9090
+tags:
+- description: 公共权限以下
+  name: public
+- description: 用户权限以下
+  name: user
+- description: 管理员权限以下
+  name: admin
+paths:
+  /user/get:
+    post:
+      description: 查询用户
+      operationId: post-users-userId
+      parameters:
+      - description: 用户Id
+        explode: true
+        in: query
+        name: userId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_users_userId_201_response'
+          description: 查询用户成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          description: 权限不足
+        "404":
+          description: 未找到指定用户
+      servers:
+      - url: http://localhost:9090
+      summary: Get User by userId
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /user/register:
+    post:
+      description: 用户注册
+      operationId: post-user-register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_user_register_request'
+        description: ""
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: 用户注册成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 邮箱或用户名已被使用
+      servers:
+      - url: http://localhost:9090
+      summary: User Register
+      tags:
+      - public
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: public
+  /user/login:
+    post:
+      description: 用户登录
+      operationId: post-user-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_user_login_request'
+        description: email和username填一项即可
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_user_login_202_response'
+          description: 用户登录成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 用户登录失败，密码或用户名错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 账号不可用
+      servers:
+      - url: http://localhost:9090
+      summary: User Login
+      tags:
+      - public
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: public
+  /user/logout:
+    get:
+      description: 用户登出
+      operationId: get-user-logout
+      responses:
+        "202":
+          description: 用户登出成功
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 未检测到登录信息
+      servers:
+      - url: http://localhost:9090
+      summary: User Logout
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /user/remove:
+    get:
+      description: 删除用户
+      operationId: get-user-remove
+      parameters:
+      - description: 用户Id
+        explode: true
+        in: query
+        name: userId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: 用户删除成功
+        "400":
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到用户
+      servers:
+      - url: http://localhost:9090
+      summary: Remove User by userId
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /blog/get:
+    get:
+      description: 查看blog页面
+      operationId: get-blog-view-blogId
+      parameters:
+      - description: 博客Id
+        explode: true
+        in: query
+        name: blogId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Blog'
+          description: 查看博客成功
+        "400":
+          description: 参数错误
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: View Blog by blogId
+      tags:
+      - public
+      x-accepts: application/json
+      x-tags:
+      - tag: public
+  /blog/publish:
+    post:
+      description: 发布博客
+      operationId: post-blog-publish
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_blog_publish_request'
+      responses:
+        "201":
+          description: 博客发布成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+      servers:
+      - url: http://localhost:9090
+      summary: Publish Blog
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /blog/remove:
+    get:
+      description: 删除博客
+      operationId: get-blog-remove
+      parameters:
+      - description: 博客Id
+        explode: true
+        in: query
+        name: blogId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: 博客删除成功
+        "400":
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: Remove Blog by blogId
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /blog/list:
+    get:
+      description: 查看最近发布的博客列表
+      operationId: get-blog-list
+      parameters:
+      - description: 检索方式和顺序
+        explode: true
+        in: query
+        name: order
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 页数
+        explode: true
+        in: query
+        name: pages
+        required: false
+        schema:
+          type: integer
+        style: form
+      - description: 单页数目
+        explode: true
+        in: query
+        name: perPages
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Blog'
+                type: array
+          description: 请求列表成功
+        "404":
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: View Blog List
+      tags:
+      - public
+      x-accepts: application/json
+      x-tags:
+      - tag: public
+  /blog/like/do:
+    get:
+      description: 点赞博客
+      operationId: get-blog-like-do
+      parameters:
+      - description: 博客Id
+        explode: true
+        in: query
+        name: blogId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: 点赞博客成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: Like Blog
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /blog/like/undo:
+    get:
+      description: 取消点赞博客
+      operationId: get-blog-like-undo
+      parameters:
+      - description: 博客Id
+        explode: true
+        in: query
+        name: blogId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: 取消点赞博客成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: Undo Like Blog
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /admin/login:
+    post:
+      description: 管理员登录
+      operationId: post-admin-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_admin_login_request'
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post_admin_login_202_response'
+          description: 管理员登录成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 账号名或密码错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Administrator'
+          description: 管理员账号已被停用
+      servers:
+      - url: http://localhost:9090
+      summary: Admin Login
+      tags:
+      - admin
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: admin
+  /admin/logout:
+    get:
+      description: 管理员登出
+      operationId: get-admin-logout
+      responses:
+        "202":
+          description: 管理员登出成功
+        "401":
+          description: 未检测到登录信息
+      servers:
+      - url: http://localhost:9090
+      summary: Admin Logout
+      tags:
+      - admin
+      x-accepts: application/json
+      x-tags:
+      - tag: admin
+  /admin/blog/status/set:
+    post:
+      description: 设置博客状态
+      operationId: post-admin-blog-status-set
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_admin_blog_status_set_request'
+      responses:
+        "201":
+          description: 设置博客状态成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到博客
+      servers:
+      - url: http://localhost:9090
+      summary: Set Blog Status
+      tags:
+      - admin
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: admin
+  /comment/do:
+    post:
+      description: 创建评论
+      operationId: post-comment-do
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post_comment_do_request'
+      responses:
+        "201":
+          description: 创建评论成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数不正确
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到目标
+      servers:
+      - url: http://localhost:9090
+      summary: Do Comment
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /comment/undo:
+    get:
+      description: 删除评论
+      operationId: get-comment-undo
+      parameters:
+      - description: 评论Id
+        explode: true
+        in: query
+        name: commentId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: 删除评论成功
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 参数错误
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 找不到评论
+      servers:
+      - url: http://localhost:9090
+      summary: Undo Comment
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+  /comment/get:
+    get:
+      description: 获取评论组
+      operationId: get-comment-get
+      parameters:
+      - description: "评论的根位置,可以是博客Id/评论Id/用户Id"
+        explode: true
+        in: query
+        name: rootId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: 检索深度
+        explode: true
+        in: query
+        name: depth
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Comment'
+                type: array
+          description: 查询评论组成功
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInfo'
+          description: 权限不足
+        "404":
+          description: 找不到根位置
+      servers:
+      - url: http://localhost:9090
+      summary: Get Comments
+      tags:
+      - user
+      x-accepts: application/json
+      x-tags:
+      - tag: user
+components:
+  schemas:
+    User:
+      description: 一般用户
+      example:
+        realName: realName
+        emailVerified: true
+        password: password
+        dateOfBirth: 1997-10-31T00:00:00.000+00:00
+        id: id
+        email: email
+        username: username
+        createDate: 2000-01-23
+        status: null
+      properties:
+        id:
+          description: 唯一标识符
+          type: string
+        username:
+          description: 用户名
+          type: string
+        realName:
+          description: 真实姓名
+          type: string
+        email:
+          description: 邮箱
+          format: email
+          type: string
+        dateOfBirth:
+          description: 生日
+          example: 1997-10-31
+          format: date
+          type: string
+        emailVerified:
+          description: Set to true if the user's email has been verified.
+          type: boolean
+        createDate:
+          description: The date that the user was created.
+          format: date
+          type: string
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+        password:
+          description: 密码
+          type: string
+      title: User
+      type: object
+    AccountStatus:
+      description: 账户状态
+      enum:
+      - regular
+      - frozen
+      - disabled
+      title: AccountStatus
+      type: string
+    ErrorInfo:
+      description: 错误信息
+      properties:
+        id:
+          description: 唯一标识符
+          type: string
+        code:
+          description: 错误码
+          type: integer
+        description:
+          description: 说明
+          type: string
+        given:
+          description: 现有的情况
+          type: string
+        expected:
+          description: 期望的情况
+          type: string
+      title: ErrorInfo
+      type: object
+    Blog:
+      description: 博客
+      example:
+        comments: comments
+        createTime: 2000-01-23T04:56:07.000+00:00
+        creator:
+          realName: realName
+          emailVerified: true
+          password: password
+          dateOfBirth: 1997-10-31T00:00:00.000+00:00
+          id: id
+          email: email
+          username: username
+          createDate: 2000-01-23
+          status: null
+        temperature: 1
+        description: description
+        updateTime: 2000-01-23T04:56:07.000+00:00
+        id: 0
+        title: title
+        content: content
+        tags:
+        - tags
+        - tags
+        likes: 6
+        status: null
+      properties:
+        id:
+          description: 唯一标识符
+          type: integer
+        title:
+          description: 标题
+          type: string
+        description:
+          description: 介绍
+          type: string
+        content:
+          description: 主体
+          type: string
+        creator:
+          $ref: '#/components/schemas/User'
+        tags:
+          description: 标签
+          items:
+            type: string
+          type: array
+        likes:
+          description: 点赞数
+          type: integer
+        comments:
+          description: 评论
+          type: string
+        createTime:
+          description: 创建时间
+          format: date-time
+          type: string
+        updateTime:
+          description: 更新时间
+          format: date-time
+          type: string
+        temperature:
+          description: 热度
+          type: integer
+        status:
+          $ref: '#/components/schemas/BlogStatus'
+      title: Blog
+      type: object
+    BlogStatus:
+      description: 博客状态
+      enum:
+      - floated
+      - sinked
+      - rejected
+      - regular
+      title: BlogStatus
+      type: string
+    Administrator:
+      description: 管理员
+      example:
+        password: password
+        accountName: accountName
+        level: 0
+        createTime: createTime
+        id: id
+        simulatedUser:
+          realName: realName
+          emailVerified: true
+          password: password
+          dateOfBirth: 1997-10-31T00:00:00.000+00:00
+          id: id
+          email: email
+          username: username
+          createDate: 2000-01-23
+          status: null
+        status: null
+      properties:
+        id:
+          description: '唯一标识符  '
+          type: string
+        accountName:
+          description: 账号名
+          type: string
+        level:
+          description: 等级
+          type: integer
+        password:
+          description: 密码
+          type: string
+        simulatedUser:
+          $ref: '#/components/schemas/User'
+        createTime:
+          description: 创建时间
+          format: time
+          type: string
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+      title: Administrator
+      type: object
+    Comment:
+      description: 评论
+      example:
+        targetId: targetId
+        creator:
+          realName: realName
+          emailVerified: true
+          password: password
+          dateOfBirth: 1997-10-31T00:00:00.000+00:00
+          id: id
+          email: email
+          username: username
+          createDate: 2000-01-23
+          status: null
+        id: id
+        content: content
+      properties:
+        id:
+          description: 唯一标识符
+          type: string
+        content:
+          description: 主体
+          type: string
+        creator:
+          $ref: '#/components/schemas/User'
+        targetId:
+          description: 目标(可以是Blog也可以是Content)
+          type: string
+      title: Comment
+      type: object
+    post_users_userId_201_response:
+      description: 用户信息
+      example:
+        user:
+          realName: realName
+          emailVerified: true
+          password: password
+          dateOfBirth: 1997-10-31T00:00:00.000+00:00
+          id: id
+          email: email
+          username: username
+          createDate: 2000-01-23
+          status: null
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      type: object
+    post_user_register_request:
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - user
+      type: object
+    post_user_login_request:
+      properties:
+        email:
+          description: 邮箱
+          type: string
+        username:
+          description: 用户名
+          type: string
+        password:
+          description: 密码
+          type: string
+      required:
+      - password
+      type: object
+    post_user_login_202_response:
+      example:
+        accessToken: accessToken
+        user:
+          realName: realName
+          emailVerified: true
+          password: password
+          dateOfBirth: 1997-10-31T00:00:00.000+00:00
+          id: id
+          email: email
+          username: username
+          createDate: 2000-01-23
+          status: null
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        accessToken:
+          description: 访问令牌
+          type: string
+      required:
+      - accessToken
+      - user
+      type: object
+    post_blog_publish_request:
+      properties:
+        blog:
+          $ref: '#/components/schemas/Blog'
+      required:
+      - blog
+      type: object
+    post_admin_login_request:
+      properties:
+        accountName:
+          description: 账户名
+          type: string
+        password:
+          description: 密码
+          type: string
+      required:
+      - accountName
+      - password
+      type: object
+    post_admin_login_202_response:
+      example:
+        admin:
+          password: password
+          accountName: accountName
+          level: 0
+          createTime: createTime
+          id: id
+          simulatedUser:
+            realName: realName
+            emailVerified: true
+            password: password
+            dateOfBirth: 1997-10-31T00:00:00.000+00:00
+            id: id
+            email: email
+            username: username
+            createDate: 2000-01-23
+            status: null
+          status: null
+        accessToken: accessToken
+      properties:
+        admin:
+          $ref: '#/components/schemas/Administrator'
+        accessToken:
+          description: 访问令牌
+          type: string
+      required:
+      - accessToken
+      - admin
+      type: object
+    post_admin_blog_status_set_request:
+      properties:
+        blogId:
+          description: 博客Id
+          type: string
+        status:
+          $ref: '#/components/schemas/BlogStatus'
+      required:
+      - blogId
+      - status
+      type: object
+    post_comment_do_request:
+      properties:
+        content:
+          description: 主体
+          type: string
+        targetId:
+          description: 目标Id
+          type: string
+      required:
+      - content
+      - targetId
+      type: object
+x-internal: false
